@@ -1,5 +1,6 @@
 from fastapi import FastAPI , HTTPException ,Depends
-from Models.UserRegistration import UserRegistration
+from Models.UserRegistration import UserRegistration 
+from Models.UserLogin import UserLogin
 from Dependencies.token_verify import verify_token
 import mysql.connector
 import os
@@ -9,7 +10,7 @@ import jwt
 from datetime import datetime , timedelta , timezone
 
 dotenv.load_dotenv()
-JWT_TOKEN = os.getenv('JWT_SECRET')
+JWT_KEY = os.getenv('JWT_SECRET')
 JWT_ALGORITHM = 'HS256'
 
 salt = bcrypt.gensalt()
@@ -49,17 +50,17 @@ def register_user(user: UserRegistration):
         conn.commit()
 
         
-
+        
         payload = {
             "email" : user.email,
             "exp": datetime.now(timezone.utc) + timedelta(hours=1)
         }
 
-        token = jwt.encode(payload , JWT_TOKEN , JWT_ALGORITHM)
+        token = jwt.encode(payload , JWT_KEY , JWT_ALGORITHM)
 
 
         return{
-            "message" : "USer registered successfully",
+            "message" : "User registered successfully",
             "token" : token
         }
 
@@ -68,6 +69,44 @@ def register_user(user: UserRegistration):
     finally:
         cursor.close()
         conn.close()
+
+
+@app.post('/login')
+def login_user(login : UserLogin):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    try:
+        query = "SELECT password FROM users WHERE email =%s"
+        cursor.execute(query , (login.email,))
+        result = cursor.fetchone()
+
+        if result is None:
+            raise HTTPException(status_code=404 , detail="User not found")
+        
+        stored_hashed_password = result[0]
+
+        if(bcrypt.checkpw(login.password.encode('utf-8') , stored_hashed_password)):
+            payload = {
+                'email' : login.email,
+                'exp' : datetime.now(timezone.utc) + timedelta(hours=1)
+            }
+
+            token = jwt.encode(payload , JWT_KEY , JWT_ALGORITHM)
+
+            return {"message :" : "Logged in successfully" , "token" : token}
+        
+        else:
+            raise HTTPException(status_code=401 , detail="Incorrect Password")
+        
+    except Exception as e:
+        raise HTTPException(status_code=500 , detail=str(e))
+    
+
+    finally:
+        cursor.close()
+        connection.close()
+
 
 
 @app.get("/protected")

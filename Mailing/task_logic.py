@@ -5,8 +5,8 @@ import httpx
 
 from typing import List, Tuple
 from datetime import date
-from mailing import send_mail
-from redis_cache import get_catched_news , set_cache_news
+from Mailing.mailing import send_mail
+from Dependencies.redis_cache import get_catched_news , set_cache_news
 from dotenv import load_dotenv
 load_dotenv()
 
