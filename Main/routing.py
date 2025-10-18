@@ -162,7 +162,3 @@ def add_preference(preference : GenericPreference , payload : dict = Depends(ver
     
 
         
-
-@app.get("/protected")
-def protected_route(payload: dict = Depends(verify_token)):
-    return {"message": "Access granted ✅", "user": payload["user_id"]}

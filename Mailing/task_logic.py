@@ -17,6 +17,7 @@ current_date = date.today()
 formatted_date = current_date.strftime("%A, %d %B %Y")
 
 async def global_news(user_list: List[Tuple]):
+   print('Global News Called')
    cache_key = f'global_news : {current_date}'
    cached_data = get_catched_news(cache_key)
    news_body = ""

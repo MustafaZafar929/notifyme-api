@@ -1,9 +1,14 @@
 import redis
 import json
+import os
+import redis
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-cache = redis.StrictRedis(host='localhost' , port=6379 , db=1)
-
+redis_url = os.getenv('REDIS_URL')
+cache = redis.Redis.from_url(redis_url, decode_responses=True)
 
 
 def get_catched_news(catch_key : str):
