@@ -1,0 +1,118 @@
+# NotificationApp
+
+A FastAPI-based notification system with email capabilities and real-time notifications.
+
+## 📁 Project Structure
+```
+NotificationApp/
+├── Main/
+│   ├── routing.py        # API routes and endpoints
+│   └── schedule.py       # Notification scheduler
+├── Models/
+│   ├── GenericPreference.py
+│   ├── UserLogin.py
+│   └── UserRegistration.py
+├── Mailing/
+│   ├── mailing.py       # Email service
+│   └── task_logic.py    # Task handlers
+└── Dependencies/
+    ├── AllowedPreferences.py
+    ├── redis_cache.py
+    └── token_verify.py
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.8+
+- Redis Server
+- MySQL Database
+- SMTP Email Account
+
+### Installation Steps
+
+1. **Clone and Setup**
+```bash
+git clone <repository-url>
+cd NotificationApp
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+2. **Environment Configuration**
+Create `.env` file:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=your_database
+JWT_SECRET=your_secret_key
+EMAIL_ADDRESS=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+```
+
+3. **Start Services**
+```bash
+# Start Redis
+redis-server
+
+# Start FastAPI
+uvicorn Main.routing:app --reload
+
+# Start Celery Worker
+celery -A Mailing.mailing worker --loglevel=info
+
+# Start Scheduler
+python Main/schedule.py
+```
+
+## 🛠 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | / | List all users |
+| POST | /signup | Register new user |
+| POST | /login | User authentication |
+| POST | /add-preference | Set notification preferences |
+
+## ⚙️ Features
+
+- JWT Authentication
+- Email Notifications
+- Scheduled Updates
+- Preference Management
+- Redis Caching
+- MySQL Integration
+
+## 🔒 Security
+
+- Bcrypt Password Hashing
+- JWT Token Authentication
+- Environment Variable Protection
+
+## 🐛 Troubleshooting
+
+If you encounter any issues:
+
+1. Verify Redis server is running
+2. Check MySQL connection
+3. Confirm environment variables
+4. Verify SMTP credentials
+
+## 📝 License
+
+MIT License
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Open pull request
+
+## 💬 Support
+
+For issues or questions, please open a GitHub issue.
